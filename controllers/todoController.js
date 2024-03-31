@@ -1,8 +1,7 @@
 
-
 import { TodoService } from '../service/todoService.js'
-export class todoController {
 
+export class todoController {
     async getTodo(req, res, next) {
         try {
 
@@ -32,7 +31,6 @@ export class todoController {
         }
     }
 
-
     async addTodo(req, res ,next) {
         try {
             const todoService = new TodoService();
@@ -44,33 +42,27 @@ export class todoController {
             err.statusCode = 500;
             err.message = ex;
            next(err)
-           
         }
     }
-
 
     async deleteTodo(req, res) {
         try {
             const todoService = new TodoService();
             const resultItem = await todoService.deleteTodo(req.params.id);
-            // console.log("todo");
-            // console.log(req.params.id);
             res.status(200).json({ status: 200, data: resultItem });
         }
         catch (ex) {
             const err = {}
             err.statusCode = 500;
             err.message = ex;
-             next(err)        }
+             next(err)        
+        }
     }
 
     async updateTodo(req, res) {
         try {
             const todoService = new TodoService();
-            await todoService.updateTodo(req.body);
-         
-            // console.log(req.params.id);
-            // console.log(req.body);
+            await todoService.updateTodo(req.body, req.params.id);
             res.status(200).json({ status: 200, data: req.params.id });
         }
         catch (ex) {
@@ -80,8 +72,4 @@ export class todoController {
             next(err)
         }
     }
-
-
-
-
 }

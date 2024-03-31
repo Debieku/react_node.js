@@ -12,7 +12,7 @@ async function executeQuery(query, params){
     });
 
     try {
-        [results] = await connection.execute(query,params);
+        [results] = await connection.execute(query, params);
 
     } catch (err) {
         console.log(err);
