@@ -1,7 +1,7 @@
 
 import { executeQuery } from './db.js';
 import { getQuery ,getByIdQuery, deleteQuery} from './getAndDeleteQuerys.js'
-import { postUserQuery, updateUserQuery } from './queryUser.js'
+import { postUserQuery, updateUserQuery,getByNameQuery } from './queryUser.js'
 
 const tableName = "new_schema.users";
 export class UserService {
@@ -18,11 +18,18 @@ export class UserService {
         return result;
     }
 
+   async getByNameQuery(name){
+    const queryUser = getByNameQuery();
+        const result =  await executeQuery(queryUser, [name]);
+        return result;
+   }
+
     async addUser(UserItem) {
+
         const queryUser = postUserQuery();
         const propertyValues = Object.values(UserItem);
-        // await executeQuery(queryUser, [UserItem.id, UserItem.name, UserItem.email, UserItem.phone]);
         await executeQuery(queryUser, propertyValues);
+        // return result.id;
     }
 
     async updateUser(UserItem, id) {
@@ -37,4 +44,5 @@ export class UserService {
         const queryUser = deleteQuery(tableName);
         await executeQuery(queryUser,[ id]);
     }
+
 }

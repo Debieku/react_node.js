@@ -1,6 +1,6 @@
 
 function postTodoQuery() {
-    const query = ` INSERT INTO new_schema.todos VALUES  (?,?,?,?,1)`;
+    const query = ` INSERT INTO new_schema.todos (userId,title,completed) VALUES  ( ?,?,?)`;
     return query
 }
 

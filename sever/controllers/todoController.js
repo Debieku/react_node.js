@@ -1,14 +1,12 @@
 
-import { PostService } from '../service/postService.js'
+import { TodoService } from '../service/todoService.js'
 
-
-export class postController {
-
-    async getPost(req, res, next) {
+export class todoController {
+    async getTodo(req, res, next) {
         try {
 
-            const postService = new PostService();
-            const resultItems = await postService.getPost()
+            const todoService = new TodoService();
+            const resultItems = await todoService.getTodo()
             return res.status(200).json(resultItems);
         }
         catch (ex) {
@@ -19,10 +17,10 @@ export class postController {
         }
     }
 
-    async getPostById(req, res) {
+    async getTodoById(req, res, next) {
         try {
-            const postService = new PostService();
-            const resultItem = await postService.getPostById(req.params.id);
+            const todoService = new TodoService();
+            const resultItem = await todoService.getTodoById(req.params.id);
             res.status(200).json({ status: 200, data: resultItem });
         }
         catch (ex) {
@@ -33,10 +31,10 @@ export class postController {
         }
     }
 
-    async addPost(req, res ,next) {
+    async addTodo(req, res ,next) {
         try {
-            const postService = new PostService();
-             await postService.addPost(req.body);
+            const todoService = new TodoService();
+             await todoService.addTodo(req.body);
             res.status(200).json({ status: 200 });
         }
         catch (ex) {
@@ -47,10 +45,10 @@ export class postController {
         }
     }
 
-    async deletePost(req, res) {
+    async deleteTodo(req, res, next) {
         try {
-            const postService = new PostService();
-            const resultItem = await postService.deletePost(req.params.id);
+            const todoService = new TodoService();
+            const resultItem = await todoService.deleteTodo(req.params.id);
             res.status(200).json({ status: 200, data: resultItem });
         }
         catch (ex) {
@@ -61,10 +59,10 @@ export class postController {
         }
     }
 
-    async updatePost(req, res) {
+    async updateTodo(req, res, next) {
         try {
-            const postService = new PostService();
-            await postService.updatePost(req.body, req.params.id);
+            const todoService = new TodoService();
+            await todoService.updateTodo(req.body, req.params.id);
             res.status(200).json({ status: 200, data: req.params.id });
         }
         catch (ex) {
