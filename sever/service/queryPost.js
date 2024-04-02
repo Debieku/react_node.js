@@ -9,7 +9,13 @@ function updatePostQuery() {
     return query
 }
 
+function getPostByUserIdQuery() {
+    const query = `SELECT * FROM new_schema.posts where isActive=1 AND userId = ?`;
+    return query
+}
+
 export {
     postPostQuery,
-    updatePostQuery
+    updatePostQuery,
+    getPostByUserIdQuery
 }

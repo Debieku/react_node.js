@@ -19,16 +19,26 @@ const Posts = () => {
   const [displayClass, setDisplayclass] = useState([]);
 
 //   const { user } = useContext(UserContext);
-const [user, setCurrentUser] = useState({id:1,name:"ffff"});
+const [user, setCurrentUser] = useState({id:1, name:"Muffy", email:	"Indore", phone: 5555555});
 
 
   useEffect(() => {
-    fetch(`http://localhost:8080/posts/${user.id}`)
+    fetch(`http://localhost:8080/post?userId=${user.id}`)
       .then(response => response.json())
       .then(json => setPosts(json))
 
   }, []);
 
+
+
+
+  const deletePost = (deletePostId) => {
+    fetch(`http://localhost:8080/post/${deletePostId}`, {
+      method: "DELETE",
+    })
+      .catch(error => console.error('Error:', error));
+    setPosts(prevPosts => prevPosts.filter(post => { return post.id !== deletePostId; }));
+  };
 
   const getMoreDetails = (displayedPost) => {
     SetDisplayComments(false);
@@ -52,60 +62,25 @@ const [user, setCurrentUser] = useState({id:1,name:"ffff"});
     }
   };
 
-  const deletePost = (deletePostId) => {
-    fetch(`http://localhost:3000/posts/${deletePostId}`, {
-      method: "DELETE",
-    })
-      .then(response => response.json())
-      .catch(error => console.error('Error:', error));
-
-
-    setPosts(prevPosts => prevPosts.filter(post => { return post.id !== deletePostId; }));
-  };
-
-  const getAndSetNextPostId = () => {
-    fetch("http://localhost:3000/nextID", {
-      method: 'GET'
-    })
-      .then((response) => response.json())
-      .then((json) => {
-        setPostId(json[0].nextPostId);
-      });
-  };
-
-  const updateNextPostId = () => {
-    fetch("http://localhost:3000/nextID/1", {
-      method: "PATCH",
-      body: JSON.stringify({
-        "nextPostId": postId + 1
-      }),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-    })
-      .then((response) => response.json())
-  };
-
   const addNewPost = () => {
-    updateNextPostId();
-    const addedPost = {
-      "id": `${postId}`,
-      "userId": `${user.id}`,
+    let addedPost = {
+      "userId": user.id,
       "title": title,
       "body": body
     };
-    fetch('http://localhost:3000/posts', {
+    fetch('http://localhost:8080/post', {
       method: 'POST',
       body: JSON.stringify(addedPost),
+      headers: {"Content-type": "application/json; charset=UTF-8"},
     })
       .then(response => response.json())
+      .then(json=>{addedPost={"id":json.insertId,"userId": user.id, "title": title,  "body": body};
+      setPosts(prevPosts => [...prevPosts, addedPost]);})
       .catch(error => console.error('Error:', error));
 
-    setPosts(prevPosts => [...prevPosts, addedPost]);
     setBody('');
     setTitle('');
     setIsToAddPost(false);
-    getAndSetNextPostId();
   };
 
   const updatePost = (postToUpdateObj) => {
@@ -120,17 +95,14 @@ const [user, setCurrentUser] = useState({id:1,name:"ffff"});
       "body": body
     };
 
-    fetch(`http://localhost:3000/posts/${postToUpdateObj.id}`, {
-      method: "PATCH",
+    fetch(`http://localhost:8080/post/${postToUpdateObj.id}`, {
+      method: "PUT",
       body: JSON.stringify({
         "body":body,
         "title":title,
       }),      
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
+      headers: {"Content-type": "application/json; charset=UTF-8",},
   })
-      .then((response) => response.json())
 
     setPosts(prevPosts => prevPosts.map((post) => {
       return post.id == postToUpdateObj.id ? updatedPost : post;

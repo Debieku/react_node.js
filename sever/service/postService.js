@@ -1,7 +1,7 @@
 
 import { executeQuery } from './db.js';
 import { getQuery ,getByIdQuery, deleteQuery} from './getAndDeleteQuerys.js'
-import { postPostQuery, updatePostQuery } from './queryPost.js'
+import { postPostQuery, updatePostQuery, getPostByUserIdQuery } from './queryPost.js'
 
 const tableName = "new_schema.posts";
 export class PostService {
@@ -12,6 +12,12 @@ export class PostService {
         return result;
     }
 
+    async getPostByUserId(userId){
+        const queryPost = getPostByUserIdQuery();
+        const result = await executeQuery(queryPost, [userId]);
+        return result;
+   }
+
     async getPostById(id) {
         const queryPost = getByIdQuery(tableName);
         const result =  await executeQuery(queryPost, [id]);
@@ -21,7 +27,8 @@ export class PostService {
     async addPost(postItem) {
         const queryPost = postPostQuery();
         const propertyValues = Object.values(postItem);
-        await executeQuery(queryPost, propertyValues);
+        const result = await executeQuery(queryPost, propertyValues);
+        return result;
     }
 
     async updatePost(postItem, id) {

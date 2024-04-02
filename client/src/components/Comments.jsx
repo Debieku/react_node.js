@@ -17,7 +17,7 @@ const Comments = () => {
     const [toSearchName, setToSearchName] = useState('');
     const [searchCommentsdBy, setSearchCommentsBy] = useState('');  
 
-    const [user, setCurrentUser] = useState({id:1,name:"ffff"});
+    const [user, setCurrentUser] = useState({id:1, name:"Muffy", email:	"Indore", phone: 5555555});
 
 
     useEffect(() => {

@@ -8,7 +8,14 @@ export class postController {
         try {
 
             const postService = new PostService();
-            const resultItems = await postService.getPost()
+            let resultItems;
+            if(Object.keys(req.query).length>0)
+            {
+                 resultItems = await postService.getPostByUserId(req.query.userId)
+            }
+            else{
+                 resultItems = await postService.getPost()
+            }
             return res.status(200).json(resultItems);
         }
         catch (ex) {
@@ -36,8 +43,8 @@ export class postController {
     async addPost(req, res ,next) {
         try {
             const postService = new PostService();
-             await postService.addPost(req.body);
-            res.status(200).json({ status: 200 });
+            const resultItem = await postService.addPost(req.body);
+            res.status(200).json(resultItem);
         }
         catch (ex) {
             const err = {}
