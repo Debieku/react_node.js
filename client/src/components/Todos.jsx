@@ -23,8 +23,7 @@ const Todos = () => {
   useEffect(() => {
     fetch(`http://localhost:8080/todo?userId=${user.id}`)
     .then(response => response.json())
-    .then(json => {setTodos(json);})
-    .then(console.log(todos));
+    .then(json => {setTodos(json);});
     }, []);
 
   if(!todos){
@@ -33,7 +32,8 @@ const Todos = () => {
 
 
   const addNewTodo = () => {
-    let addedTodo = { "userId": user.id, "title": title,"completed": completed };
+    let addedTodo = { "userId": user.id, "title": title, "completed": completed };
+    console.log(addedTodo);
     addedTodo=JSON.stringify(addedTodo);
     fetch('http://localhost:8080/todo', {
       method: 'POST',
@@ -41,7 +41,7 @@ const Todos = () => {
       body: addedTodo,
     })
       .then(response => response.json())
-      .then(json=>{addedTodo={"id":json.insertId,"userId": user.id, "title": title,  "completed": completed};
+      .then(json=>{console.log(json); addedTodo={"id":json.insertId,"userId": user.id, "title": title,  "completed": completed};
        setTodos(prevTodos => [...prevTodos, addedTodo]);})
       .catch(error => console.error('Error:', error));
     setTitle('');

@@ -5,6 +5,7 @@ import { userRouter } from './routers/userRouter.js'
 import { todoRouter } from './routers/todoRouter.js'
 import { postRouter } from './routers/postRouter.js'
 import {logErrors} from './middleware/logError.js'
+import { loginRouter } from './routers/loginRouter.js'
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use('/post', postRouter);
 app.use('/user', userRouter);
 app.use('/todo', todoRouter);
 app.use('/comment', commentRouter);
+app.use('/login',loginRouter)
 app.use(logErrors);
 
 

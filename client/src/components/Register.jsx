@@ -1,0 +1,79 @@
+import React, { useState, useEffect} from 'react';
+import { useNavigate } from 'react-router-dom';
+import '../styles/RegisterAndLogin.css';
+
+const Register = () => {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [verifyPassword, setVerifyPassword] = useState('');
+    const [isRegistered, setIsRegistered] = useState(false);
+
+    const navigate = useNavigate();
+  
+    const handleRegister = () => {
+      fetch(`http://localhost:8080/user`)
+        .then(response => response.json())
+        .then(user => {
+    
+          if (user.length > 0) {
+            alert('You are an existing user. Please log in.');
+            setPassword('');
+          } else {
+            if(verifyPassword == password){
+              setIsRegistered(true);            
+            }
+            else{
+              alert('Please validate your password.');
+            }
+          }
+        })
+        .catch(error => console.error('Error:', error));
+    };
+
+    useEffect(() => {
+
+      const navigateToFinishRegister = () => {
+        navigate('/finishRegister', {
+          state: { userName: username}
+        });
+      };
+      if (isRegistered) {
+        navigateToFinishRegister();
+      }
+    }, [isRegistered, navigate, username, password]);
+
+      const handleLoginClick = () => {
+        navigate('/login');
+      };
+
+      return (
+        <div>
+          <div className='signUpLogin-container'> 
+            <h2>Register</h2>
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Verify Password"
+              value={verifyPassword}
+              onChange={(e) => setVerifyPassword(e.target.value)}
+            />
+            <button className='signUpBtn' onClick={handleRegister}>Register</button>
+            <button className='loginBtn' onClick= {handleLoginClick}>login</button>
+        </div>
+
+        </div>
+      );
+};
+
+export default Register;

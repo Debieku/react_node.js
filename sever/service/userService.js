@@ -18,7 +18,7 @@ export class UserService {
         return result;
     }
 
-   async getByNameQuery(name){
+   async getUserByName(name){
     const queryUser = getByNameQuery();
         const result =  await executeQuery(queryUser, [name]);
         return result;
@@ -28,8 +28,7 @@ export class UserService {
 
         const queryUser = postUserQuery();
         const propertyValues = Object.values(UserItem);
-        await executeQuery(queryUser, propertyValues);
-        // return result.id;
+        return await executeQuery(queryUser, propertyValues);
     }
 
     async updateUser(UserItem, id) {

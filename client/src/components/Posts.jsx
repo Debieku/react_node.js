@@ -1,8 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
-import { UserContext } from '../contexts/UserProvider';
-// import '../styles/Global.css';
-// import '../styles/Posts.css';
 
 const Posts = () => {
   const [posts, setPosts] = useState([]);

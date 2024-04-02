@@ -1,6 +1,7 @@
 
 // import { PasswordController } from './passwordController.js';
 import { UserService } from '../service/userService.js'
+import { LoginController } from './loginController.js';
 
 
 export class userController {
@@ -36,11 +37,15 @@ export class userController {
 
     async addUser(req, res ,next) {
         try {
-            // const passwordService = new PasswordService();
+            const password=req.body.password;
+            const loginController= new LoginController();
+            const userName=req.body.userName;
+            loginController.addPassword({userName,password});
             const userService = new UserService();
-            const userId = await userService.addUser(req.body);
-            // await passwordService.addPassword(userId, req.headers);
-            res.status(200).json({ status: 200 });
+            delete req.body.password;
+            console.log(req.body)
+            const resualt = await userService.addUser(req.body);
+            res.status(200).json(resualt);
         }
         catch (ex) {
             const err = {}
