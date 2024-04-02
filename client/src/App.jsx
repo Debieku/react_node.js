@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import cors from 'cors';
 import './App.css'
 import { BrowserRouter, Routes, Route} from 'react-router-dom';
 import './App.css';
@@ -8,6 +9,7 @@ import Todos from './components/Todos';
 import Posts from './components/Posts';
 import Info from './components/Info';
 import Comments from './components/Comments';
+import Try from './components/Try';
 function App() {
   const [count, setCount] = useState(0)
 
@@ -15,6 +17,7 @@ function App() {
     <>
     <BrowserRouter>
       <Routes>
+        <Route path="try" element={<Try/>}/>
         <Route path="users/:userId">
           <Route path="home" element={<Home />}>
             <Route path="info" element={<Info />} />

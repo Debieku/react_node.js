@@ -9,7 +9,15 @@ function updateTodoQuery() {
     return query
 }
 
+function getTodoByUserIdQuery() {
+    const query = `SELECT * FROM new_schema.todos where isActive=1 AND userId = ?`;
+    return query
+}
+
+
+
 export {
     postTodoQuery,
     updateTodoQuery,
+    getTodoByUserIdQuery
 }

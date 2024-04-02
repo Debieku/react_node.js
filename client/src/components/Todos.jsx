@@ -19,48 +19,96 @@ const Todos = () => {
   const [toSearchState, setToSearchState] = useState('');
   const [searchTodosdBy, setSearchTodosBy] = useState('');
 
-  const [user, setCurrentUser] = useState({id:1,name:"ffff"});
-
-
+  const [user, setCurrentUser] = useState({id:1, name:"Muffy", email:	"Indore", phone:	5555555});
   useEffect(() => {
-    fetch(`http://localhost:8080/todos/${user.id}`)
+    fetch(`http://localhost:8080/todo?userId=${user.id}`)
     .then(response => response.json())
-    .then(json => {setTodos(json);});
+    .then(json => {setTodos(json);})
+    .then(console.log(todos));
     }, []);
 
   if(!todos){
       return <></>;
   }
 
-  todos.map((todo) => (
-      todo.id = parseInt(todo.id)
-  ));
+
+  const addNewTodo = () => {
+    let addedTodo = { "userId": user.id, "title": title,"completed": completed };
+    addedTodo=JSON.stringify(addedTodo);
+    fetch('http://localhost:8080/todo', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: addedTodo,
+    })
+      .then(response => response.json())
+      .then(json=>{addedTodo={"id":json.insertId,"userId": user.id, "title": title,  "completed": completed};
+       setTodos(prevTodos => [...prevTodos, addedTodo]);})
+      .catch(error => console.error('Error:', error));
+    setTitle('');
+    setCompleted('');
+    setIsToAddTodo(false);  
+  };
 
 
-  const handleCheckboxChange = (e, todo) => {
-    fetch(`http://localhost:3000/todos/${todo.id}`, {
-            method: "PATCH",
+  // todos.map((todo) => (
+  //     todo.id = parseInt(todo.id)
+  // ));
+
+
+  const updateTodo = ( todo, e, ti) => {
+    console.log(title); 
+    fetch(`http://localhost:8080/todo/${todo.id}`, {
+            method: "PUT",
             body: JSON.stringify({
-                "completed": e.target.checked
+                "title":ti,
+                "completed": e
             }),
             headers: {
                 "Content-type": "application/json; charset=UTF-8",
             },
-        })
-            .then((response) => response.json())
+        }).catch(error=>console.error('Error:', error))
 
     setTodos(prevTodos => prevTodos.map((prevTodo) => {
         if(prevTodo.id === todo.id){
-          prevTodo.completed = e.target.checked;
+          prevTodo.completed = e;
+          prevTodo.title=ti;
         }
         return (prevTodo);
       }));
-      
+      setToUpdateTodoId('');
+      setTitle('');
+      console.log(title); 
   };
+
+
+  // const updateTodo = (todo) => {
+  //   // const updatedTodo = { 
+  //   //     "userId": `${todo.userI}`,
+  //   //     "id": `${todo.id}`,
+  //   //     "title": title,
+  //   //     "completed": todo.completed
+  //   // };
+
+  //   fetch(`http://localhost:8080/todos?todoId=${todo.id}`, {
+  //       method: "put",
+  //       body: JSON.stringify({
+  //         "title":title,
+  //       }),
+  //   })
+  //   .then(response => response.json())
+  //   .catch(error => console.error('Error:', error));
+
+  //   setTodos(prevTodos => prevTodos.map((prevTodo) => {
+  //      if(prevTodo.id === todo.id) 
+  //       prevTodo.title=title 
+  //      return prevTodo;
+  //   }));
+   
+  // };
 
   const searchTodos = (propertytype, property) => {
     if (property === '' || property === undefined) {
-      fetch(`http://localhost:3000/todos?userId=${user.id}`)
+      fetch(`http://localhost:8080/todos?userId=${user.id}`)
           .then(response => response.json())
           .then(json => setTodos(json))
           .then(setSearchTodosBy('finished'));
@@ -74,59 +122,17 @@ const Todos = () => {
   };
 
   const deleteTodo = (todoId) => {
-    fetch(`http://localhost:3000/todos/${todoId}`, {
+    fetch(`http://localhost:8080/todo/${todoId}`, {
       method: "DELETE",
     })
-      .then(response => response.json())
       .catch(error => console.error('Error:', error));
 
       setTodos(prevTodos => prevTodos.filter(todo => { return todo.id !== todoId; }));
     };
    
-  const addNewTodo = () => {
-    updateNextTodoId();
-    const addedTodo = {  
-    "userId": `${user.id}`, 
-    "id": `${todoId}`,
-    "title": title, 
-    "completed": completed }; 
-    fetch('http://localhost:3000/todos', {
-      method: 'POST',
-      body: JSON.stringify(addedTodo),
-    })
-      .then(response => response.json())
-      .catch(error => console.error('Error:', error));
+  
 
-    setTodos(prevTodos => [...prevTodos, addedTodo]);
-    setTitle('');
-    setCompleted('');
-    setIsToAddTodo(false);  
-    getAndSetNextTodoId();
-  };
 
-  const updateTodo = (todo) => {
-    const updatedTodo = { 
-        "userId": `${todo.userI}`,
-        "id": `${todo.id}`,
-        "title": title,
-        "completed": todo.completed
-    };
-
-    fetch(`http://localhost:3000/todos/${todo.id}`, {
-        method: "PATCH",
-        body: JSON.stringify({
-          "title":title,
-        }),
-    })
-    .then(response => response.json())
-    .catch(error => console.error('Error:', error));
-
-    setTodos(prevTodos => prevTodos.map((prevTodo) => {
-       return prevTodo.id === todo.id ? updatedTodo : prevTodo;
-    }));
-    setToUpdateTodoId('');
-    setTitle('');
-  };
 
   
   const cancel = () => {
@@ -146,29 +152,6 @@ const Todos = () => {
     fetch(`http://localhost:3000/todos?userId=${user.id}`)
       .then(response => response.json())
       .then(json => setTodos(json));
-  };
-
-  const getAndSetNextTodoId = () => {
-    fetch("http://localhost:3000/nextID", {
-      method: 'GET'
-    })
-      .then((response) => response.json())
-      .then((json) => {
-        setTodoId(json[0].nextTodoId);
-      });
-  };
-
-  const updateNextTodoId = () => {
-    fetch("http://localhost:3000/nextID/1", {
-      method: "PATCH",
-      body: JSON.stringify({
-        "nextTodoId": todoId + 1
-      }),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-    })
-      .then((response) => response.json())
   };
 
   const compareAlphabetical = (a, b) => {
@@ -217,6 +200,8 @@ const Todos = () => {
     };
 
   
+    if(todos=='')
+      return(<></>)
     return(
         <>
         <div className="container">
@@ -285,7 +270,7 @@ const Todos = () => {
                     <input 
                     type="checkbox" 
                     defaultChecked={todo.completed}
-                    value={completed} onChange={()=>{handleCheckboxChange(event, todo);}}
+                    value={completed} onChange={()=>{updateTodo( todo,event.target.checked, todo.title)}}
                     />
                   </p>
                 </div>
@@ -300,7 +285,7 @@ const Todos = () => {
                               value={title}
                               onChange={(e) => setTitle(e.target.value)}
                           />
-                          <button onClick={() => { updateTodo(todo); }}>update</button>
+                          <button onClick={() => { updateTodo(todo,todo.completed, title); }}>update</button>
                           <button onClick={() => { cancel(); }}>cancel</button>
                       </>
                           : <button onClick={() => setToUpdateTodoId(todo.id)}>update todo</button>

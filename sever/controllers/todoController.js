@@ -4,9 +4,15 @@ import { TodoService } from '../service/todoService.js'
 export class todoController {
     async getTodo(req, res, next) {
         try {
-
             const todoService = new TodoService();
-            const resultItems = await todoService.getTodo()
+            let resultItems;
+            if(Object.keys(req.query).length>0)
+            {
+                 resultItems = await todoService.getTodoByUserId(req.query.userId)
+            }
+            else{
+                 resultItems = await todoService.getTodo()
+            }
             return res.status(200).json(resultItems);
         }
         catch (ex) {
@@ -16,6 +22,21 @@ export class todoController {
             next(err)
         }
     }
+
+    // async getTodoByUserId(req, res, next){
+    //     try {            
+    //         console.log("control beggining");
+    //         const todoService = new TodoService();
+            
+    //         return res.status(200).json(resultItems);
+    //     }
+    //     catch (ex) {
+    //         const err = {}
+    //         err.statusCode = 500;
+    //         err.message = ex;
+    //         next(err)
+    //     }
+    // }
 
     async getTodoById(req, res, next) {
         try {
@@ -34,8 +55,8 @@ export class todoController {
     async addTodo(req, res ,next) {
         try {
             const todoService = new TodoService();
-             await todoService.addTodo(req.body);
-            res.status(200).json({ status: 200 });
+            const resultItem = await todoService.addTodo(req.body);
+            res.status(200).json(resultItem);
         }
         catch (ex) {
             const err = {}

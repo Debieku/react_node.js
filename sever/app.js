@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import { commentRouter } from  './routers/commentRouter.js'
 import { userRouter } from './routers/userRouter.js'
 import { todoRouter } from './routers/todoRouter.js'
@@ -8,6 +9,7 @@ import {logErrors} from './middleware/logError.js'
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 app.use('/post', postRouter);
 app.use('/user', userRouter);
 app.use('/todo', todoRouter);
@@ -20,4 +22,3 @@ app.listen(8080, (err) => {
     console.log("Server listening on PORT", 8080);
 });
 
-console.log("yeeeeiiii!!!!!!!!!!!!!")

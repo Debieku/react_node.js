@@ -1,7 +1,7 @@
 
 import { executeQuery } from './db.js';
 import { getQuery ,getByIdQuery, deleteQuery} from './getAndDeleteQuerys.js'
-import { postTodoQuery, updateTodoQuery } from './queryTodo.js'
+import { postTodoQuery, updateTodoQuery, getTodoByUserIdQuery } from './queryTodo.js'
 
 const tableName = "new_schema.todos";
 export class TodoService {
@@ -12,6 +12,12 @@ export class TodoService {
         return result;
     }
 
+    async getTodoByUserId(userId){
+         const queryTodo = getTodoByUserIdQuery();
+         const result = await executeQuery(queryTodo, [userId]);
+         return result;
+    }
+
     async getTodoById(id) {
         const queryTodo = getByIdQuery(tableName);
         const result =  await executeQuery(queryTodo, [id]);
@@ -19,23 +25,20 @@ export class TodoService {
     }
 
     async addTodo(TodoItem) {
-        console.log(TodoItem)
         const queryTodo = postTodoQuery();
         const propertyValues = Object.values(TodoItem);
-        await executeQuery(queryTodo, propertyValues);
+        const result = await executeQuery(queryTodo, propertyValues);
+        return result;
     }
 
     async updateTodo(TodoItem, id) {
-        console.log(TodoItem)
         const queryTodo = updateTodoQuery();
         const propertyValues = Object.values(TodoItem);
         propertyValues.push(id);
-        console.log(propertyValues)
         await executeQuery(queryTodo, propertyValues);
     }
 
     async deleteTodo(id) {
-        console.log(id)
         const queryTodo = deleteQuery(tableName);
         await executeQuery(queryTodo,[ id]);
     }
