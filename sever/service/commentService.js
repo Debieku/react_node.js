@@ -1,7 +1,7 @@
 
 import { executeQuery } from './db.js';
 import { getQuery ,getByIdQuery, deleteQuery} from './getAndDeleteQuerys.js'
-import { postCommentQuery, updateCommentQuery } from './queryComment.js'
+import { postCommentQuery, updateCommentQuery,getCommentByPostIdQuery } from './queryComment.js'
 
 const tableName = "new_schema.comments";
 export class CommentService {
@@ -12,6 +12,12 @@ export class CommentService {
         return result;
     }
 
+    async getCommentByPostId(postId){
+        const queryComment = getCommentByPostIdQuery();
+        const result = await executeQuery(queryComment, [postId]);
+        return result;
+   }
+
     async getCommentById(id) {
         const queryComment = getByIdQuery(tableName);
         const result =  await executeQuery(queryComment, [id]);
@@ -21,7 +27,8 @@ export class CommentService {
     async addComment(commentItem) {
         const queryComment = postCommentQuery();
         const propertyValues = Object.values(commentItem);
-        await executeQuery(queryComment, propertyValues);
+        const result = await executeQuery(queryComment, propertyValues);
+        return result;
     }
 
     async updateComment(commentItem, id) {

@@ -6,9 +6,15 @@ export class commentController {
 
     async getComment(req, res, next) {
         try {
-
             const commentService = new CommentService();
-            const resultItems = await commentService.getComment()
+            let resultItems;
+            if(Object.keys(req.query).length>0)
+            {
+                 resultItems = await commentService.getCommentByPostId(req.query.postId)
+            }
+            else{
+                 resultItems = await commentService.getComment()
+            }
             return res.status(200).json(resultItems);
         }
         catch (ex) {
@@ -36,8 +42,8 @@ export class commentController {
     async addComment(req, res ,next) {
         try {
             const commentService = new CommentService();
-            await commentService.addComment(req.body);
-            res.status(200).json({ status: 200 });
+            let resultItems=await commentService.addComment(req.body);
+            res.status(200).json(resultItems);
         }
         catch (ex) {
             const err = {}
@@ -63,9 +69,10 @@ export class commentController {
 
     async updateComment(req, res, next) {
         try {
+            console.log(req.params.id)
             const commentService = new CommentService();
-            await commentService.updateComment(req.body, req.params.id);
-            res.status(200).json({ status: 200, data: req.params.id });
+            await commentService.updateComment(req.body,req.params.id);
+            res.status(200).json({status:200});
         }
         catch (ex) {
             const err = {}

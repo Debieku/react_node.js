@@ -21,39 +21,31 @@ const Comments = () => {
 
 
     useEffect(() => {
-        fetch(`http://localhost:3000/comments?postId=${post.id}`)
+        fetch(`http://localhost:8080/comment?postId=${post.id}`)
             .then(response => response.json())
             .then(json => setComments(json));
-        fetch("http://localhost:3000/nextID", {
-            method: 'GET'
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                setCommentId(json[0].nextCommentId);
-            });
     }, []);
 
     const addNewComment = async (postId) => {
-        updateNextPostId();
-        const addedComment = { 
-            "postId": `${postId}`, 
-            "id": `${commentId}`, 
+        let addedComment = { 
+            "postId": postId,
+            "email": user.email,
             "name": name, 
-            "email": user.email, 
             "body": body 
         };
-        fetch('http://localhost:3000/comments', {
+        fetch('http://localhost:8080/comment', {
             method: 'POST',
-            body: JSON.stringify(addedComment),
+            body: JSON.stringify(addedComment), 
+            headers: {"Content-type": "application/json; charset=UTF-8"},
         })
             .then(response => response.json())
+            .then(json=>{addedComment={"id":json.insertId,"postId": postId, "name": name, "email":user.email ,"body": body};
+            setComments(prevComments => [...prevComments, addedComment]);})
             .catch(error => console.error('Error:', error));
 
-        setComments(prevComments => [...prevComments, addedComment]);
         setBody('');
         setName('');
         setIsToAddComment(false);
-        getAndSetNextPostId();
     };
 
     const searchComments = (propertytype, property) => {
@@ -72,26 +64,26 @@ const Comments = () => {
       };
 
     const deleteComment = (deleteCommentId) => {
-        fetch(`http://localhost:3000/comments/${deleteCommentId}`, {
+        fetch(`http://localhost:8080/comment/${deleteCommentId}`, {
             method: "DELETE",
         })
-            .then(response => response.json())
             .catch(error => console.error('Error:', error));
 
         setComments(prevComments => prevComments.filter(comment => { return comment.id !== deleteCommentId; }));
     };
 
     const updateCommentFunc = (updateCommentObj) => {
-        fetch(`http://localhost:3000/comments/${updateCommentObj.id}`, {
-            method: "PATCH",
+        console.log(updateCommentObj.id)
+        fetch(`http://localhost:8080/comment/${updateCommentObj.id}`, {
+            method: "PUT",
             body: JSON.stringify({
-                "body": body,
+                "name": updateCommentObj.name,
+                "body": body
             }),
-            headers: {
-                "Content-type": "application/json; charset=UTF-8",
-            },
+            headers: {"Content-type": "application/json; charset=UTF-8"},
         })
             .then((response) => response.json())
+            .catch(error => console.error('Error:', error));
 
         const updatedComment = {
             "postId": updateCommentObj.postId,
@@ -187,7 +179,7 @@ const Comments = () => {
                 }
             </div>
 
-                {(comments != '') &&
+                {(comments.length>0) &&
                     <>
                         {comments.map((comment, i) => {
                             return (<div key={i}>

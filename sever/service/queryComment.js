@@ -9,7 +9,13 @@ function updateCommentQuery() {
     return query
 }
 
+function getCommentByPostIdQuery() {
+    const query = `SELECT * FROM new_schema.comments where isActive=1 AND postId = ?`;
+    return query
+}
+
 export {
     postCommentQuery,
-    updateCommentQuery
+    updateCommentQuery,
+    getCommentByPostIdQuery
 }
