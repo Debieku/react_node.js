@@ -15,12 +15,12 @@ app.use('/post', postRouter);
 app.use('/user', userRouter);
 app.use('/todo', todoRouter);
 app.use('/comment', commentRouter);
-app.use('/login',loginRouter)
+app.use('/login',loginRouter);
 app.use(logErrors);
 
 
 app.listen(8080, (err) => {
-    // if (err) console.error(err);
+    if (err) console.error(err);
     console.log("Server listening on PORT", 8080);
 });
 

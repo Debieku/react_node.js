@@ -19,14 +19,18 @@ const Posts = () => {
 const [user, setCurrentUser] = useState({id:1, name:"Muffy", email:	"Indore", phone: 5555555});
 
 
+  // useEffect(() => {
+  //   fetch(`http://localhost:8080/post?userId=${user.id}`)
+  //     .then(response => response.json())
+  //     .then(json => setPosts(json))
+  // }, []);
+
+
   useEffect(() => {
-    fetch(`http://localhost:8080/post?userId=${user.id}`)
+    fetch(`http://localhost:8080/post`)
       .then(response => response.json())
       .then(json => setPosts(json))
-
   }, []);
-
-
 
 
   const deletePost = (deletePostId) => {

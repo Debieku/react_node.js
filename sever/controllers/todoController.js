@@ -1,18 +1,22 @@
+import { Service } from '../service/service.js'
 
-import { TodoService } from '../service/todoService.js'
+
+const tableName = "todos";
 
 export class todoController {
+
     async getTodo(req, res, next) {
         try {
-            const todoService = new TodoService();
+            const service = new Service();
             let resultItems;
-            if(Object.keys(req.query).length>0)
-            {
-                 resultItems = await todoService.getTodoByUserId(req.query.userId)
+            if (Object.keys(req.query).length > 0) {
+                const userId = req.query.userId;
+                resultItems = await service.getBy(tableName, { "userId": userId });
             }
-            else{
-                 resultItems = await todoService.getTodo()
+            else {
+                resultItems = await service.get(tableName);
             }
+            resultItems.forEach((resultItem) => delete resultItem.isActive)
             return res.status(200).json(resultItems);
         }
         catch (ex) {
@@ -23,46 +27,47 @@ export class todoController {
         }
     }
 
-    // async getTodoByUserId(req, res, next){
-    //     try {            
-    //         console.log("control beggining");
-    //         const todoService = new TodoService();
-            
-    //         return res.status(200).json(resultItems);
-    //     }
-    //     catch (ex) {
-    //         const err = {}
-    //         err.statusCode = 500;
-    //         err.message = ex;
-    //         next(err)
-    //     }
-    // }
-
     async getTodoById(req, res, next) {
         try {
-            const todoService = new TodoService();
-            const resultItem = await todoService.getTodoById(req.params.id);
-            res.status(200).json({ status: 200, data: resultItem });
+            const service = new Service();
+            const id = req.params.id;
+            const resultItems = await service.getBy(tableName, { "id": id });
+            delete resultItems[0].isActive;
+            res.status(200).json({ status: 200, data: resultItems });
         }
         catch (ex) {
             const err = {}
             err.statusCode = 500;
             err.message = ex;
-             next(err)
+            next(err)
         }
     }
 
-    async addTodo(req, res ,next) {
+    async addTodo(req, res, next) {
         try {
-            const todoService = new TodoService();
-            const resultItem = await todoService.addTodo(req.body);
+            const service = new Service();
+            const resultItem = await service.add(tableName, req.body);
             res.status(200).json(resultItem);
         }
         catch (ex) {
             const err = {}
             err.statusCode = 500;
             err.message = ex;
-           next(err)
+            next(err)
+        }
+    }
+
+    async updateTodo(req, res, next) {
+        try {
+            const service = new Service();
+            await service.update(tableName, req.body, req.params.id);
+            res.status(200).json({ status: 200, data: req.params.id });
+        }
+        catch (ex) {
+            const err = {}
+            err.statusCode = 500;
+            err.message = ex;
+            next(err)
         }
     }
 
@@ -76,21 +81,8 @@ export class todoController {
             const err = {}
             err.statusCode = 500;
             err.message = ex;
-             next(err)        
-        }
-    }
-
-    async updateTodo(req, res, next) {
-        try {
-            const todoService = new TodoService();
-            await todoService.updateTodo(req.body, req.params.id);
-            res.status(200).json({ status: 200, data: req.params.id });
-        }
-        catch (ex) {
-            const err = {}
-            err.statusCode = 500;
-            err.message = ex;
             next(err)
         }
     }
+
 }
