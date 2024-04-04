@@ -1,13 +1,10 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { UserContext } from '../contexts/UserProvider';
 // import '../styles/Global.css';
 
 const Comments = () => {
     const location = useLocation();
-    const { post} = location.state;
-    // const { user } = useContext(UserContext);
-    const [commentId, setCommentId] = useState('');
+    const { post, user } = location.state;
     const [comments, setComments] = useState([]);
     const [isToAddComment, setIsToAddComment] = useState(false);
     const [updateComment, setUpdateComment] = useState('');
@@ -16,8 +13,6 @@ const Comments = () => {
     const [toSearchId, setToSearchId] = useState('');
     const [toSearchName, setToSearchName] = useState('');
     const [searchCommentsdBy, setSearchCommentsBy] = useState('');  
-
-    const [user, setCurrentUser] = useState({id:1, name:"Muffy", email:	"Indore", phone: 5555555});
 
 
     useEffect(() => {
@@ -115,29 +110,6 @@ const Comments = () => {
           .then(response => response.json())
           .then(json => setComments(json));
       };
-
-    const getAndSetNextPostId = () => {
-        fetch("http://localhost:3000/nextID", {
-            method: 'GET'
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                setCommentId(json[0].nextCommentId);
-            });
-    };
-
-    const updateNextPostId = () => {
-        fetch("http://localhost:3000/nextID/1", {
-            method: "PATCH",
-            body: JSON.stringify({
-                "nextCommentId": commentId + 1
-            }),
-            headers: {
-                "Content-type": "application/json; charset=UTF-8",
-            },
-        })
-            .then((response) => response.json())
-    };
 
     return (
         <>

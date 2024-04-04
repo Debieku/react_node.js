@@ -4,10 +4,12 @@ function loginQuery() {
 }
 
 function registerQuery() {
-    const query = `INSERT INTO new_schema.userpasswords (userName, password ) VALUES  ( ?, ? )`;
+    const query = `INSERT INTO new_schema.userpassword (userId, password ) VALUES  ( ?, ? )`;
     return query
 }
 
 
-export {loginQuery,
-    registerQuery} 
+export {
+    loginQuery,
+    registerQuery
+} 

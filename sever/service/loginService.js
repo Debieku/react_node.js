@@ -1,6 +1,6 @@
 
 import { executeQuery } from './db.js';
-import { loginQuery,registerQuery } from './queryLogin.js'
+import { loginQuery, registerQuery } from './queryLogin.js'
 import { UserService } from '../service/userService.js';
 
 const tableName = "new_schema.userpassword";
@@ -22,7 +22,7 @@ export class LoginService {
     }
 
     async register(loginObj){
-        const queryRegister = registerQuery(tableName);
+        const queryRegister = registerQuery();
         const propertyValues = Object.values(loginObj);
         return await executeQuery(queryRegister, propertyValues);
     }

@@ -19,10 +19,16 @@ function deleteQuery(tableName) {
     return `UPDATE new_schema.${tableName} SET isActive=0 WHERE isActive=1 AND id = ?`;
 }
 
+function limit(tableName){
+   return `SELECT * FROM new_schema.${tableName} LIMIT ? OFFSET ?;`
+    
+}
+
 export {
     getQuery,
     getByQuery,
     deleteQuery,
     addQuery,
-    updateQuery
+    updateQuery,
+    limit
 }

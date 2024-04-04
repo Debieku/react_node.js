@@ -1,9 +1,11 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 
 const Posts = () => {
+  const location = useLocation();
+  const { user } = location.state;
   const [posts, setPosts] = useState([]);
-  const [postId, setPostId] = useState('');
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [isToAddPost, setIsToAddPost] = useState(false);
@@ -14,20 +16,11 @@ const Posts = () => {
   const [toSearchTitle, setToSearchTitle] = useState('');
   const [searchPostsdBy, setSearchPostsBy] = useState('');
   const [displayClass, setDisplayclass] = useState([]);
-
-//   const { user } = useContext(UserContext);
-const [user, setCurrentUser] = useState({id:1, name:"Muffy", email:	"Indore", phone: 5555555});
-
-
-  // useEffect(() => {
-  //   fetch(`http://localhost:8080/post?userId=${user.id}`)
-  //     .then(response => response.json())
-  //     .then(json => setPosts(json))
-  // }, []);
+  const [showMore, setShowMore] = useState(true);
 
 
   useEffect(() => {
-    fetch(`http://localhost:8080/post`)
+    fetch(`http://localhost:8080/post?limit=2&start=0`)
       .then(response => response.json())
       .then(json => setPosts(json))
   }, []);
@@ -43,8 +36,8 @@ const [user, setCurrentUser] = useState({id:1, name:"Muffy", email:	"Indore", ph
 
   const getMoreDetails = (displayedPost) => {
     SetDisplayComments(false);
-    let copyDisplayclass=[];
-    posts.map((post,i)=>{copyDisplayclass[i] = post.id==displayedPost.id?"display":"false"})
+    let copyDisplayclass = [];
+    posts.map((post, i) => { copyDisplayclass[i] = post.id == displayedPost.id ? "display" : "false" })
     setDisplayclass(copyDisplayclass);
     setDisplayDetails(displayedPost.id);
   };
@@ -72,11 +65,13 @@ const [user, setCurrentUser] = useState({id:1, name:"Muffy", email:	"Indore", ph
     fetch('http://localhost:8080/post', {
       method: 'POST',
       body: JSON.stringify(addedPost),
-      headers: {"Content-type": "application/json; charset=UTF-8"},
+      headers: { "Content-type": "application/json; charset=UTF-8" },
     })
       .then(response => response.json())
-      .then(json=>{addedPost={"id":json.insertId,"userId": user.id, "title": title,  "body": body};
-      setPosts(prevPosts => [...prevPosts, addedPost]);})
+      .then(json => {
+        addedPost = { "id": json.insertId, "userId": user.id, "title": title, "body": body };
+        setPosts(prevPosts => [...prevPosts, addedPost]);
+      })
       .catch(error => console.error('Error:', error));
 
     setBody('');
@@ -85,13 +80,13 @@ const [user, setCurrentUser] = useState({id:1, name:"Muffy", email:	"Indore", ph
   };
 
   const updatePost = (postToUpdateObj) => {
-    if(body=='')
+    if (body == '')
       setBody(postToUpdateObj.body);
-    if(title=='')
+    if (title == '')
       setTitle(postToUpdateObj.title);
     const updatedPost = {
-      "uesrId" : user.id,
-      "id":`${postToUpdateObj.id}`,
+      "uesrId": user.id,
+      "id": `${postToUpdateObj.id}`,
       "title": title,
       "body": body
     };
@@ -99,11 +94,11 @@ const [user, setCurrentUser] = useState({id:1, name:"Muffy", email:	"Indore", ph
     fetch(`http://localhost:8080/post/${postToUpdateObj.id}`, {
       method: "PUT",
       body: JSON.stringify({
-        "body":body,
-        "title":title,
-      }),      
-      headers: {"Content-type": "application/json; charset=UTF-8",},
-  })
+        "body": body,
+        "title": title,
+      }),
+      headers: { "Content-type": "application/json; charset=UTF-8", },
+    })
 
     setPosts(prevPosts => prevPosts.map((post) => {
       return post.id == postToUpdateObj.id ? updatedPost : post;
@@ -128,10 +123,17 @@ const [user, setCurrentUser] = useState({id:1, name:"Muffy", email:	"Indore", ph
     setToSearchId('');
     setTitle('');
     setToSearchId('');
-    fetch(`http://localhost:3000/posts?userId=${user.id}`)
+    fetch(`http://localhost:8080/post??limit=2`)
       .then(response => response.json())
       .then(json => setPosts(json));
   };
+
+  const showMorePosts=()=>{
+    const postArrayList = posts.length; 
+    fetch(`http://localhost:8080/post?limit=2&start=${postArrayList + 2}`)
+        .then(response => response.json())
+        .then(json =>{json.length==0? setShowMore(false) : setPosts(prevPosts => [...prevPosts].concat(json))})
+  }
 
   return (
     <>
@@ -178,40 +180,47 @@ const [user, setCurrentUser] = useState({id:1, name:"Muffy", email:	"Indore", ph
             </div>
             {displayDetails == post.id ?
               <>
+                <p className="item-content">uesr id: {post.userId}</p>
                 <p className="item-content">body: {post.body}</p>
                 <div className="actions item-actions">
-                  {isToUpdatePost ?
+                  {post.userId == user.id &&
                     <>
-                      <br />
-                      <input
-                        type="text"
-                        placeholder="title"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                      />
-                      <input
-                        type="text"
-                        placeholder="body"
-                        value={body}
-                        onChange={(e) => setBody(e.target.value)}
-                      />
-                      <button onClick={() => updatePost(post)}>update</button>
-                      <button onClick={() => cancel()}>cancel</button><br />
+                      {isToUpdatePost ?
+                        <>
+                          <br />
+                          <input
+                            type="text"
+                            placeholder="title"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                          />
+                          <input
+                            type="text"
+                            placeholder="body"
+                            value={body}
+                            onChange={(e) => setBody(e.target.value)}
+                          />
+                          <button onClick={() => updatePost(post)}>update</button>
+                          <button onClick={() => cancel()}>cancel</button><br />
+                        </>
+                        : <button onClick={() => { setIsToUpdatePost(true) }}>update post</button>
+                      }
                     </>
-                    : <button onClick={() => setIsToUpdatePost(true)}>update post</button>
                   }
-                  <button onClick={() => deletePost(post.id)}>delete post</button>
+                  {post.userId == user.id && <button onClick={() => deletePost(post.id)}>delete post</button>}
                 </div>
                 {!displayComments ?
                   <button onClick={() => SetDisplayComments(true)} >show all comments</button>
                   :
-                  <><Navigate to={`${post.id}/comments`} state={{ post: post }} />
+                  <>
+                    <Navigate to={`${post.id}/comments`} state={{ post: post, user: user }} />
                     <Outlet />
                   </>
                 }
               </>
               : <button onClick={() => getMoreDetails(post)}>open post</button>
             }
+            <br/>
           </div>
         ))}
         <div className="section add-section">
@@ -233,6 +242,7 @@ const [user, setCurrentUser] = useState({id:1, name:"Muffy", email:	"Indore", ph
           </>
             : <button onClick={() => setIsToAddPost(true)}>add post</button>
           }
+          {showMore&&<button onClick={showMorePosts}>display more posts</button>}
         </div>
       </div>
     </>

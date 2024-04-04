@@ -8,11 +8,15 @@ export class postController {
             const service = new Service();
             let resultItems;
             if (Object.keys(req.query).length > 0) {
-                const userId = req.query.userId;
-                resultItems = await service.getBy(tableName, { 'userId': userId });
+                const limit = req.query.limit;
+                const startLimit=req.query.start;
+
+                resultItems = await service.limit(tableName, limit, startLimit);
+                console.log(`req: get ${limit} posts, res: successfull`);
             }
             else {
                 resultItems = await service.get(tableName);
+                console.log("req: get all posts, res: successfull");
             }
             resultItems.forEach((resultItem) => delete resultItem.isActive)
             return res.status(200).json(resultItems);
@@ -31,6 +35,7 @@ export class postController {
             const id = req.params.id;
             const resultItem = await service.getBy(tableName, { 'id': id });
             delete resultItem[0].isActive;
+            console.log("req: get post by id= " + id + ", res: successfull")
             res.status(200).json(resultItem);
         }
         catch (ex) {
@@ -45,6 +50,7 @@ export class postController {
         try {
             const service = new Service();
             const resultItem = await service.add(tableName, req.body);
+            console.log("req: add post with id= " + resultItem.insertId + ", res: successfull")
             res.status(200).json(resultItem);
         }
         catch (ex) {
@@ -59,6 +65,7 @@ export class postController {
         try {
             const service = new Service();
             await service.update(tableName, req.body, req.params.id);
+            console.log("req: update post with id= " + req.params.id + ", res: successfull")
             res.status(200).json({ status: 200, data: req.params.id });
         }
         catch (ex) {
@@ -73,6 +80,7 @@ export class postController {
         try {
             const service = new Service();
             const resultItem = await service.delete(tableName, req.params.id);
+            console.log("req: delete post with id= " + req.params.id + ", res: successfull")
             res.status(200).json({ status: 200, data: resultItem });
         }
         catch (ex) {

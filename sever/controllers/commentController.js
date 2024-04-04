@@ -12,11 +12,13 @@ export class commentController {
             if (Object.keys(req.query).length > 0) {
                 const postId = req.query.postId;
                 resultItems = await service.getBy(tableName, { 'postId': postId });
+                console.log("req: get post's id="+ postId +" comments, res: successfull")
             }
             else {
                 resultItems = await service.get(tableName);
+                console.log("req: get all comments, res: successfull")
             }
-            resultItems.forEach((resultItem, i) => delete resultItem.isActive)
+            resultItems.forEach((resultItem) => delete resultItem.isActive);
             return res.status(200).json(resultItems);
         }
         catch (ex) {
@@ -33,6 +35,7 @@ export class commentController {
             const id = req.params.id;
             const resultItem = await service.getBy(tableName, { 'id': id });
             delete resultItem[0].isActive;
+            console.log("req: get comment by id= " + id + ", res: successfull")
             res.status(200).json({ status: 200, data: resultItem });
         }
         catch (ex) {
@@ -47,6 +50,7 @@ export class commentController {
         try {
             const service = new Service();
             let resultItems = await service.add(tableName, req.body);
+            console.log("req: add comment with id= " + resultItems.insertId + ", res: successfull")
             res.status(200).json(resultItems);
         }
         catch (ex) {
@@ -62,6 +66,7 @@ export class commentController {
             console.log(req.params.id)
             const service = new Service();
             await service.update(tableName, req.body, req.params.id);
+            console.log("req: update comment with id= " + req.params.id + ", res: successfull")
             res.status(200).json({ status: 200 });
         }
         catch (ex) {
@@ -76,6 +81,7 @@ export class commentController {
         try {
             const service = new Service();
             const resultItem = await service.delete(tableName, req.params.id);
+            console.log("req: delete comment with id= " + req.params.id + ", res: successfull")
             res.status(200).json({ status: 200, data: resultItem });
         }
         catch (ex) {

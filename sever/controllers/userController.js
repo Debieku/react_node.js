@@ -1,8 +1,8 @@
 
 // import { PasswordController } from './passwordController.js';
 import { Service } from '../service/service.js';
-import { LoginController } from './loginController.js';
-import { UserService } from '../service/userService.js';
+import { LoginService } from '../service/loginService.js';
+// import { UserService } from '../service/userService.js';
 
 const tableName = "users";
 
@@ -12,7 +12,8 @@ export class userController {
         try {
             const service = new Service();
             const resultItems = await service.get(tableName);
-            resultItems.forEach((resultItem, i) => delete resultItem.isActive)
+            resultItems.forEach((resultItem, i) => delete resultItem.isActive);
+            console.log("req: get all users, res: successfull")
             return res.status(200).json(resultItems);
         }
         catch (ex) {
@@ -29,6 +30,7 @@ export class userController {
             const id = req.params.id;
             const resultItem = await service.getBy(tableName, { "id": id });
             delete resultItem[0].isActive;
+            console.log("req: get user by id= " + id + ", res: successfull")
             res.status(200).json(resultItem);
         }
         catch (ex) {
@@ -42,13 +44,15 @@ export class userController {
     async addUser(req, res, next) {
         try {
             const password = req.body.password;
-            const loginController = new LoginController();
-            const userName = req.body.userName;
-            loginController.addPassword({ userName, password });
-            const userService = new UserService();
+            const service = new Service();
             delete req.body.password;
             console.log(req.body)
-            const resualt = await userService.addUser(req.body);
+            const resualt = await service.add(tableName, req.body);
+            const id = resualt.insertId;
+            const loginService = new LoginService();
+            console.log("id ",id)
+            loginService.register({ id, password });
+            console.log("req: add user with id= " + resualt.insertId + ", res: successfull")
             res.status(200).json(resualt);
         }
         catch (ex) {
@@ -63,6 +67,7 @@ export class userController {
         try {
             const userService = new UserService();
             const resultItem = await userService.deleteUser(tableName, req.params.id);
+            console.log("req: delete user with id= " + resultItem.insertId + ", res: successfull")
             res.status(200).json(resultItem);
         }
         catch (ex) {
@@ -77,6 +82,7 @@ export class userController {
         try {
             const service = new Service();
             await service.update(tableName, req.body, req.params.id);
+            console.log("req: update user with id= " + req.params.id + ", res: successfull")
             res.status(200).json({ status: 200, data: req.params.id });
         }
         catch (ex) {

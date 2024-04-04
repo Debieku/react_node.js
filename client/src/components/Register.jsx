@@ -1,79 +1,93 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/RegisterAndLogin.css';
+// import '../styles/RegisterAndLogin.css';
 
 const Register = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [verifyPassword, setVerifyPassword] = useState('');
-    const [isRegistered, setIsRegistered] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [verifyPassword, setVerifyPassword] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [user, setUser] = useState('');
 
-    const navigate = useNavigate();
-  
-    const handleRegister = () => {
-      fetch(`http://localhost:8080/user`)
+  const navigate = useNavigate();
+
+  // const loginUser = () => {
+  //   setCurrentUser(user);
+  // };
+
+  const handleRegister = () => {
+    if (verifyPassword != password) {
+      alert('Please validate your password.');
+    }
+      console.log("jjjj")
+      const newUser = { "name": name, "userName": username, "email": email, "phone": phone, "password": password }
+      fetch('http://localhost:8080/user', {
+        method: 'POST',
+        body: JSON.stringify(newUser),
+        headers: { "Content-type": "application/json; charset=UTF-8", },
+      })
         .then(response => response.json())
-        .then(user => {
-    
-          if (user.length > 0) {
-            alert('You are an existing user. Please log in.');
-            setPassword('');
-          } else {
-            if(verifyPassword == password){
-              setIsRegistered(true);            
-            }
-            else{
-              alert('Please validate your password.');
-            }
-          }
-        })
+        .then(response => {
+          console.log(response)
+          setUser({ "id": response.insertId, "name": name, "userName": username, "email": email, "phone": phone })})
+          .then( console.log("user"+newUser),
+            navigate(`/users/${user.id}/home`, { state: { user: user } }))
         .catch(error => console.error('Error:', error));
-    };
+    
+  };
 
-    useEffect(() => {
+  const handleLoginClick = () => {
+    navigate('/login');
+  };
 
-      const navigateToFinishRegister = () => {
-        navigate('/finishRegister', {
-          state: { userName: username}
-        });
-      };
-      if (isRegistered) {
-        navigateToFinishRegister();
-      }
-    }, [isRegistered, navigate, username, password]);
+  return (
+    <div>
+      <div className='signUpLogin-container'>
+        <h2>Register</h2>
+        <input
+          type="text"
+          placeholder="name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="phone"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+        />
 
-      const handleLoginClick = () => {
-        navigate('/login');
-      };
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Verify Password"
+          value={verifyPassword}
+          onChange={(e) => setVerifyPassword(e.target.value)}
+        />
+        <button className='signUpBtn' onClick={handleRegister}>Register</button>
+        <button className='loginBtn' onClick={handleLoginClick}>login</button>
+      </div>
 
-      return (
-        <div>
-          <div className='signUpLogin-container'> 
-            <h2>Register</h2>
-            <input
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <input
-              type="password"
-              placeholder="Verify Password"
-              value={verifyPassword}
-              onChange={(e) => setVerifyPassword(e.target.value)}
-            />
-            <button className='signUpBtn' onClick={handleRegister}>Register</button>
-            <button className='loginBtn' onClick= {handleLoginClick}>login</button>
-        </div>
-
-        </div>
-      );
+    </div>
+  );
 };
-
 export default Register;

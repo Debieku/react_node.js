@@ -1,30 +1,27 @@
-import React, { useState, useParams, useContext} from 'react';
-import { Outlet } from 'react-router-dom';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import {UserContext} from '../contexts/UserProvider';
+import { Outlet, useLocation } from 'react-router-dom';
 // import '../styles/Global.css';
 
 const Home = () => {
-    // const { user } = useContext(UserContext);
+  const location = useLocation();
+  const { user } = location.state;
     const navigate = useNavigate(); 
-    const [user, setCurrentUser] = useState({id:1,name:"ffff"});
 
-    const handleLogOut = () => {
-        localStorage.setItem('activeUser', '');
+    const handleLogOut = () => {   
+        localStorage.setItem('currentUser', '');
         navigate('/login');
-
     };
-
+    console.log(user);
     return(
         <>
         <div className="container">
             <h1 className="heading">Hi {user.name}</h1>
             <div className="home-buttons">
                 <button onClick={handleLogOut}>Logout</button>
-                <button onClick={()=>navigate("albums")}>Albums</button>
-                <button onClick={()=>navigate("posts")}>Posts</button>
-                <button onClick={()=>navigate("todos")}>Todos</button>
-                <button onClick={()=>navigate("info")}>Info</button>
+                <button onClick={()=>navigate("posts", {state:{ user: user }})}>Posts</button>
+                <button onClick={()=>navigate("todos", {state:{ user: user }})}>Todos</button>
+                <button onClick={()=>navigate("info", {state:{ user: user }})}>Info</button>
             </div>
             <Outlet />
         </div>

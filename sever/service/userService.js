@@ -1,6 +1,6 @@
 
 import { executeQuery } from './db.js';
-import { getQuery ,getByIdQuery, deleteQuery} from './getAndDeleteQuerys.js'
+import { getQuery ,getByQuery, deleteQuery} from './query.js'
 import { postUserQuery, updateUserQuery,getByNameQuery } from './queryUser.js'
 
 const tableName = "new_schema.users";
@@ -13,7 +13,7 @@ export class UserService {
     }
 
     async getUserById(id) {
-        const queryUser = getByIdQuery(tableName);
+        const queryUser = getByQuery(tableName);
         const result =  await executeQuery(queryUser, [id]);
         return result;
     }
