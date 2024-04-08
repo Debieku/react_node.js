@@ -6,12 +6,10 @@ import { LoginController } from '../controllers/loginController.js'
 
 const loginRouter=express.Router();
 
-const logincontroller = new LoginController()
+const logincontroller = new LoginController();
 
-// loginRouter.get("/:id", logincontroller.getLoginById)
-// loginRouter.get("/", logincontroller.getLogin)
 loginRouter.post("/", logincontroller.checkPassword);
-// loginRouter.put("/:id", logincontroller.updateLogin)
+loginRouter.put("/:id", logincontroller.updatePassword)
 
 
 export{

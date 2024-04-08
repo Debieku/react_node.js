@@ -23,8 +23,21 @@ export class LoginService {
 
     async register(loginObj){
         const queryRegister = registerQuery();
-        const propertyValues = Object.values(loginObj);
-        return await executeQuery(queryRegister, propertyValues);
+        return await executeQuery(queryRegister, loginObj);
+    }
+
+
+
+    async updatePassword(id, oldPassword, newPassword){
+        let queryPassword = loginQuery();
+        const result = await executeQuery(queryPassword, [oldPassword, id]);
+        if (result[0]["COUNT(*)"] == 0)
+        return { "result": 0 };
+        else{
+            queryPassword = updatePassword();
+            const res = await executeQuery(queryPassword, [newPassword, id]);
+        }
+        
     }
  
 }

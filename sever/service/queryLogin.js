@@ -4,10 +4,13 @@ function loginQuery() {
 }
 
 function registerQuery() {
-    const query = `INSERT INTO new_schema.userpassword (userId, password ) VALUES  ( ?, ? )`;
+    const query = `INSERT INTO new_schema.userpassword ( userId, password ) VALUES  ( ?, ? )`;
     return query
 }
 
+function updatePassword() {
+    return `UPDATE new_schema.userpassword SET password=? WHERE id = ?`;
+}
 
 export {
     loginQuery,

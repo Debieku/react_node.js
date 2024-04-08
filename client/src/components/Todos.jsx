@@ -19,13 +19,8 @@ const Todos = () => {
   useEffect(() => {
     fetch(`http://localhost:8080/todo?userId=${user.id}`)
       .then(response => response.json())
-      .then(json => { setTodos(json); });
+      .then(json => { setTodos(json); console.log(json)});
   }, []);
-
-  if (!todos) {
-    return <></>;
-  }
-
 
   const addNewTodo = () => {
     let addedTodo = { "userId": user.id, "title": title, "completed": completed };
@@ -38,7 +33,7 @@ const Todos = () => {
     })
       .then(response => response.json())
       .then(json => {
-        console.log(json); addedTodo = { "id": json.insertId, "userId": user.id, "title": title, "completed": completed };
+        console.log(json); addedTodo = { "id": json.insertId, "userId": user.id, "title": title, "completed": completed==0?0:1 };console.log(addedTodo);
         setTodos(prevTodos => [...prevTodos, addedTodo]);
       })
       .catch(error => console.error('Error:', error));
@@ -78,43 +73,15 @@ const Todos = () => {
     console.log(title);
   };
 
-
-  // const updateTodo = (todo) => {
-  //   // const updatedTodo = { 
-  //   //     "userId": `${todo.userI}`,
-  //   //     "id": `${todo.id}`,
-  //   //     "title": title,
-  //   //     "completed": todo.completed
-  //   // };
-
-  //   fetch(`http://localhost:8080/todos?todoId=${todo.id}`, {
-  //       method: "put",
-  //       body: JSON.stringify({
-  //         "title":title,
-  //       }),
-  //   })
-  //   .then(response => response.json())
-  //   .catch(error => console.error('Error:', error));
-
-  //   setTodos(prevTodos => prevTodos.map((prevTodo) => {
-  //      if(prevTodo.id === todo.id) 
-  //       prevTodo.title=title 
-  //      return prevTodo;
-  //   }));
-
-  // };
-
   const searchTodos = (propertytype, property) => {
     if (property === '' || property === undefined) {
-      fetch(`http://localhost:8080/todos?userId=${user.id}`)
-        .then(response => response.json())
-        .then(json => setTodos(json))
-        .then(setSearchTodosBy('finished'));
-
+      alert("please enter values")
+      return;
     } else {
-      fetch(`http://localhost:3000/todos?${propertytype}=${property}`)
+      console.log(`propertytype:${propertytype}, property ${property}`)
+      fetch(`http://localhost:8080/todo?${propertytype}=${property}&userId=${user.id}`)
         .then(response => response.json())
-        .then(json => setTodos(json))
+        .then(json => { console.log(json); setTodos(json) })
         .then(setSearchTodosBy('finished'));
     }
   };
@@ -122,15 +89,9 @@ const Todos = () => {
   const deleteTodo = (todoId) => {
     fetch(`http://localhost:8080/todo/${todoId}`, {
       method: "DELETE",
-    })
+    }).then(setTodos(prevTodos => prevTodos.filter(todo => { return todo.id !== todoId; })))
       .catch(error => console.error('Error:', error));
-
-    setTodos(prevTodos => prevTodos.filter(todo => { return todo.id !== todoId; }));
   };
-
-
-
-
 
 
   const cancel = () => {
@@ -147,19 +108,12 @@ const Todos = () => {
     setTitle('');
     setToSearchId('');
     setSearchTodosBy('');
-    fetch(`http://localhost:3000/todos?userId=${user.id}`)
+    fetch(`http://localhost:8080/todo?userId=${user.id}`)
       .then(response => response.json())
       .then(json => setTodos(json));
   };
 
-  const compareAlphabetical = (a, b) => {
-    if (a.title < b.title) {
-      return -1;
-    } if (a.title > b.title) {
-      return 1;
-    }
-    return 0;
-  };
+
 
   const compareSerially = (a, b) => {
     if (a.id < b.id) {
@@ -181,14 +135,8 @@ const Todos = () => {
 
   const handleSelectTodos = (selectType) => {
     const currentTodos = todos;
-    if (selectType === 'alphabetical') {
-      currentTodos.sort(compareAlphabetical);
-    }
-    else if (selectType === 'serially') {
+    if (selectType === 'serially') {
       currentTodos.sort(compareSerially);
-    }
-    else if (selectType === 'random') {
-      currentTodos.sort((a, b) => 0.5 - Math.random());
     }
     else if (selectType === 'completion') {
       currentTodos.sort(compareCompletion);
@@ -213,7 +161,7 @@ const Todos = () => {
                   onChange={(e) => setToSearchId(e.target.value)}
                 />
                 <button onClick={() => searchTodos(searchTodosdBy, toSearchId)}>search</button>
-                <button onClick={() => { cancel(); }}>cancel</button><br />
+                <button onClick={cancel}>cancel</button><br />
               </>
               : searchTodosdBy === 'title' ?
                 <>
@@ -224,7 +172,7 @@ const Todos = () => {
                     onChange={(e) => setToSearchTitle(e.target.value)}
                   />
                   <button onClick={() => searchTodos(searchTodosdBy, toSearchTitle)}>search</button>
-                  <button onClick={() => { cancel(); }}>cancel</button><br />
+                  <button onClick={cancel}>cancel</button><br />
                 </>
                 : searchTodosdBy === 'completed' ?
                   <>
@@ -234,31 +182,27 @@ const Todos = () => {
                       value={toSearchState}
                       onChange={(e) => setToSearchState(e.target.value)}
                     />
-                    <button onClick={() => searchTodos(searchTodosdBy, toSearchState == 'true')}>search</button>
-                    <button onClick={() => { cancel(); }}>cancel</button><br />
+                    <button onClick={() => searchTodos(searchTodosdBy, toSearchState)}>search</button>
+                    <button onClick={cancel}>cancel</button><br />
                   </>
                   : searchTodosdBy === 'finished' ?
                     <>
-                      <button onClick={() => { cancelSearch(); }}>cancel search</button><br />
-
+                      <button onClick={cancelSearch}>cancel search</button><br />
                     </>
                     : <>
                       <button onClick={() => setSearchTodosBy('id')}>search by id:</button>
                       <button onClick={() => setSearchTodosBy('title')}>search by title:</button>
                       <button onClick={() => setSearchTodosBy('completed')}>search by state:</button>
                     </>
-
             }
           </div>
 
           <div className="actions item-actions">
             <h2>Select todos for user {user.id}:</h2>
             <button onClick={() => handleSelectTodos('serially')} >Show serially</button>
-            <button onClick={() => handleSelectTodos('alphabetical')}>View in alphabetical order</button>
             <button onClick={() => handleSelectTodos('completion')}>View by task completion</button>
-            <button onClick={() => handleSelectTodos('random')}>Show in random order</button>
           </div>
-          {todos&&todos.map((todo) => (
+          {todos.length > 0 ? todos.map((todo) => (
             <div key={todo.id} className="item">
               <div className="item-content">
                 <p>{todo.id}.  {todo.title}
@@ -281,14 +225,15 @@ const Todos = () => {
                         onChange={(e) => setTitle(e.target.value)}
                       />
                       <button onClick={() => { updateTodo(todo, todo.completed, title); }}>update</button>
-                      <button onClick={() => { cancel(); }}>cancel</button>
+                      <button onClick={cancel}>cancel</button>
                     </>
                     : <button onClick={() => setToUpdateTodoId(todo.id)}>update todo</button>
                   }
                 </div>
               </>}
             </div>
-          ))}
+          ))
+            : <></>}
           <div className="section add-section">
             {isToAddTodo ?
               <>
@@ -305,7 +250,7 @@ const Todos = () => {
                   onChange={(e) => setCompleted(e.target.value)}
                 />
                 <button onClick={() => addNewTodo()}>add</button>
-                <button onClick={() => { cancel(); }}>cancel</button><br />
+                <button onClick={cancel}>cancel</button><br />
               </>
               : <button onClick={() => setIsToAddTodo(true)}>add todo</button>
             }

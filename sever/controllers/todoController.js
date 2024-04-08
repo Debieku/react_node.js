@@ -10,8 +10,9 @@ export class todoController {
             const service = new Service();
             let resultItems;
             if (Object.keys(req.query).length > 0) {
+                console.log("req.query",req.query);
                 const userId = req.query.userId;
-                resultItems = await service.getBy(tableName, { "userId": userId });
+                resultItems = await service.getBy(tableName, req.query );
                 console.log("req: get user's id="+ userId +" todos, res: successfull")
             }
             else {

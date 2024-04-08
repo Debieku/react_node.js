@@ -1,6 +1,6 @@
 
-import React, { useEffect, useState } from 'react';
-import { Navigate, useNavigate, json } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 // import '../styles/RegisterAndLogin.css';
 
 
@@ -12,6 +12,7 @@ const Login = () => {
   const [user, setUser] = useState('');
 
   const navigate = useNavigate();
+
   const handleLogin = () => {
     if (userName == '' || password == '') {
       alert("Enter name and password");
@@ -28,11 +29,11 @@ const Login = () => {
         console.log(jsonUser)
         if (jsonUser.result == 0)
           alert('please try again or register.');
-        else if(jsonUser.result == "blocked")
+        else if (jsonUser.result == "blocked")
           alert("you tried too many times, you are blocked! try again later");
         else {
           setUser(jsonUser.user[0]);
-          localStorage.setItem("currentUser",JSON.stringify(jsonUser.user));
+          localStorage.setItem("currentUser", JSON.stringify(jsonUser.user));
           setIsLoggedInUser(true);
         }
         setUserName('');
@@ -41,13 +42,14 @@ const Login = () => {
   };
 
 
-  // const goToRegister = () => {
-  //   setToRegister(true);
-  // };
+  const goToRegister = () => {
+    console.log("kjgbvjyhg");
+    setToRegister(true);
+  };
 
   return (
     <div>
-      <Navigate to={isLoggedInUser ? `/users/${user.id}/home` :toRegister?"/register": "/login"} state={{ user: user }} />
+      <Navigate to={isLoggedInUser ? `/users/${user.id}/home` : toRegister ? "/register" : "/login"} state={{ user: user }} />
       <div className='signUpLogin-container'>
         <h2>insert user</h2>
         <input
@@ -63,7 +65,7 @@ const Login = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
         <button className='loginBtn' onClick={handleLogin}>Login</button>
-        <button className='signUpBtn' onClick={()=>setToRegister(true)}>Register</button>
+        <button className='signUpBtn' onClick={() => goToRegister()}>Register</button>
       </div>
     </div>
   );

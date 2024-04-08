@@ -12,9 +12,6 @@ const Posts = () => {
   const [displayDetails, setDisplayDetails] = useState('');
   const [isToUpdatePost, setIsToUpdatePost] = useState(false);
   const [displayComments, SetDisplayComments] = useState('');
-  const [toSearchId, setToSearchId] = useState('');
-  const [toSearchTitle, setToSearchTitle] = useState('');
-  const [searchPostsdBy, setSearchPostsBy] = useState('');
   const [displayClass, setDisplayclass] = useState([]);
   const [showMore, setShowMore] = useState(true);
 
@@ -42,19 +39,6 @@ const Posts = () => {
     setDisplayDetails(displayedPost.id);
   };
 
-  const searchPosts = (propertytype, property) => {
-    if (property === '' || property === undefined) {
-      fetch(`http://localhost:3000/posts?userId=${user.id}`)
-        .then(response => response.json())
-        .then(json => setPosts(json))
-        .then(setSearchPostsBy('finished'));
-    } else {
-      fetch(`http://localhost:3000/posts?${propertytype}=${property}`)
-        .then(response => response.json())
-        .then(json => setPosts(json))
-        .then(setSearchPostsBy('finished'));
-    }
-  };
 
   const addNewPost = () => {
     let addedPost = {
@@ -110,22 +94,8 @@ const Posts = () => {
   const cancel = () => {
     setIsToAddPost(false);
     setIsToUpdatePost(false);
-    setSearchPostsBy('');
-    setToSearchId('');
     setTitle('');
     setBody('');
-    setToSearchId('');
-  };
-
-
-  const cancelSearch = () => {
-    setSearchPostsBy('');
-    setToSearchId('');
-    setTitle('');
-    setToSearchId('');
-    fetch(`http://localhost:8080/post??limit=2`)
-      .then(response => response.json())
-      .then(json => setPosts(json));
   };
 
   const showMorePosts=()=>{
@@ -139,40 +109,6 @@ const Posts = () => {
     <>
       <div className="container">
         <h1 className="heading">Posts</h1>
-        <div className="section search-section">
-          <h2>Search Posts</h2>
-          {searchPostsdBy === 'id' ?
-            <>
-              <input
-                type="number"
-                placeholder="id"
-                value={toSearchId}
-                onChange={(e) => setToSearchId(e.target.value)}
-              />
-              <button onClick={() => searchPosts(searchPostsdBy, toSearchId)}>search</button>
-              <button onClick={() => { cancel(); }}>cancel</button><br />
-            </>
-            : searchPostsdBy === 'title' ?
-              <>
-                <input
-                  type="text"
-                  placeholder="title"
-                  value={toSearchTitle}
-                  onChange={(e) => setToSearchTitle(e.target.value)}
-                />
-                <button onClick={() => searchPosts(searchPostsdBy, toSearchTitle)}>search</button>
-                <button onClick={() => { cancel(); }}>cancel</button><br />
-              </>
-              : searchPostsdBy === 'finished' ?
-                <>
-                  <button onClick={() => { cancelSearch(); }}>cancel search</button><br />
-                </>
-                : <>
-                  <button onClick={() => setSearchPostsBy('id')}>search by id:</button>
-                  <button onClick={() => setSearchPostsBy('title')}>search by title:</button>
-                </>
-          }
-        </div>
         {posts.map((post, index) => (
           <div className={`${displayClass[index]}`} key={index}>
             <div className="item-content">

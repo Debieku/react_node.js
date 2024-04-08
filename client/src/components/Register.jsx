@@ -9,7 +9,7 @@ const Register = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [user, setUser] = useState('');
+  const [user, setUser] = useState('gfhfgh');
 
   const navigate = useNavigate();
 
@@ -20,27 +20,26 @@ const Register = () => {
   const handleRegister = () => {
     if (verifyPassword != password) {
       alert('Please validate your password.');
+      return;
     }
-      console.log("jjjj")
-      const newUser = { "name": name, "userName": username, "email": email, "phone": phone, "password": password }
-      fetch('http://localhost:8080/user', {
-        method: 'POST',
-        body: JSON.stringify(newUser),
-        headers: { "Content-type": "application/json; charset=UTF-8", },
-      })
-        .then(response => response.json())
-        .then(response => {
-          console.log(response)
-          setUser({ "id": response.insertId, "name": name, "userName": username, "email": email, "phone": phone })})
-          .then( console.log("user"+newUser),
-            navigate(`/users/${user.id}/home`, { state: { user: user } }))
-        .catch(error => console.error('Error:', error));
-    
+    console.log("jjjj")
+    let temp;
+    const newUser = { "name": name, "userName": username, "email": email, "phone": phone, "password": password }
+    fetch('http://localhost:8080/user', {
+      method: 'POST',
+      body: JSON.stringify(newUser),
+      headers: { "Content-type": "application/json; charset=UTF-8", },
+    })
+      .then(response => response.json())
+      .then(response => {temp = { "id": response.insertId, "name": name, "username": username, "email": email, "phone": phone};
+       navigate(`/users/${response.insertId}/home`, { state: { user: temp } })})
+      .catch(error => console.error('Error:', error));
+
   };
 
-  const handleLoginClick = () => {
-    navigate('/login');
-  };
+  // const handleLoginClick = () => {
+  //   navigate('/login');
+  // };
 
   return (
     <div>
@@ -84,7 +83,7 @@ const Register = () => {
           onChange={(e) => setVerifyPassword(e.target.value)}
         />
         <button className='signUpBtn' onClick={handleRegister}>Register</button>
-        <button className='loginBtn' onClick={handleLoginClick}>login</button>
+        <button className='loginBtn' onClick={() => navigate('/login')}>login</button>
       </div>
 
     </div>

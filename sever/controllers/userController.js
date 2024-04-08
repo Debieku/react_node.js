@@ -50,8 +50,8 @@ export class userController {
             const resualt = await service.add(tableName, req.body);
             const id = resualt.insertId;
             const loginService = new LoginService();
-            console.log("id ",id)
-            loginService.register({ id, password });
+            console.log("id ", id)
+            await loginService.register([ id, password ]);
             console.log("req: add user with id= " + resualt.insertId + ", res: successfull")
             res.status(200).json(resualt);
         }
