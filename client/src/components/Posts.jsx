@@ -27,8 +27,9 @@ const Posts = () => {
     fetch(`http://localhost:8080/post/${deletePostId}`, {
       method: "DELETE",
     })
+    .then(setPosts(prevPosts => prevPosts.filter(post => { return post.id !== deletePostId; })))
       .catch(error => console.error('Error:', error));
-    setPosts(prevPosts => prevPosts.filter(post => { return post.id !== deletePostId; }));
+    
   };
 
   const getMoreDetails = (displayedPost) => {
@@ -83,6 +84,7 @@ const Posts = () => {
       }),
       headers: { "Content-type": "application/json; charset=UTF-8", },
     })
+    .catch(error => console.error('Error:', error));
 
     setPosts(prevPosts => prevPosts.map((post) => {
       return post.id == postToUpdateObj.id ? updatedPost : post;
@@ -103,6 +105,7 @@ const Posts = () => {
     fetch(`http://localhost:8080/post?limit=2&start=${postArrayList + 2}`)
         .then(response => response.json())
         .then(json =>{json.length==0? setShowMore(false) : setPosts(prevPosts => [...prevPosts].concat(json))})
+        .catch(error => console.error('Error:', error));
   }
 
   return (

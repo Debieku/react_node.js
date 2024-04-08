@@ -18,7 +18,8 @@ const Comments = () => {
     useEffect(() => {
         fetch(`http://localhost:8080/comment?postId=${post.id}`)
             .then(response => response.json())
-            .then(json => setComments(json));
+            .then(json => setComments(json))
+            .catch(error => console.error('Error:', error));
     }, []);
 
     const addNewComment = async (postId) => {
@@ -48,13 +49,15 @@ const Comments = () => {
           fetch(`http://localhost:3000/comments?postId=${post.id}`)
               .then(response => response.json())
               .then(json => setComments(json))
-              .then(setSearchCommentsBy('finished'));
+              .then(setSearchCommentsBy('finished'))
+              .catch(error => console.error('Error:', error));
 
         } else {
           fetch(`http://localhost:3000/comments?${propertytype}=${property}`)
               .then(response => response.json())
               .then(json => setComments(json))
-              .then(setSearchCommentsBy('finished'));
+              .then(setSearchCommentsBy('finished'))
+              .catch(error => console.error('Error:', error));
         }
       };
 
@@ -68,7 +71,6 @@ const Comments = () => {
     };
 
     const updateCommentFunc = (updateCommentObj) => {
-        console.log(updateCommentObj.id)
         fetch(`http://localhost:8080/comment/${updateCommentObj.id}`, {
             method: "PUT",
             body: JSON.stringify({
@@ -108,7 +110,8 @@ const Comments = () => {
         setSearchCommentsBy('');
         fetch(`http://localhost:3000/comments?postId=${post.id}`)
           .then(response => response.json())
-          .then(json => setComments(json));
+          .then(json => setComments(json))
+          .catch(error => console.error('Error:', error));
       };
 
     return (

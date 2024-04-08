@@ -19,12 +19,11 @@ const Todos = () => {
   useEffect(() => {
     fetch(`http://localhost:8080/todo?userId=${user.id}`)
       .then(response => response.json())
-      .then(json => { setTodos(json); console.log(json)});
+      .then(json => setTodos(json));
   }, []);
 
   const addNewTodo = () => {
     let addedTodo = { "userId": user.id, "title": title, "completed": completed };
-    console.log(addedTodo);
     addedTodo = JSON.stringify(addedTodo);
     fetch('http://localhost:8080/todo', {
       method: 'POST',
@@ -33,7 +32,7 @@ const Todos = () => {
     })
       .then(response => response.json())
       .then(json => {
-        console.log(json); addedTodo = { "id": json.insertId, "userId": user.id, "title": title, "completed": completed==0?0:1 };console.log(addedTodo);
+        addedTodo = { "id": json.insertId, "userId": user.id, "title": title, "completed": completed == 0 ? 0 : 1 };
         setTodos(prevTodos => [...prevTodos, addedTodo]);
       })
       .catch(error => console.error('Error:', error));
@@ -43,13 +42,8 @@ const Todos = () => {
   };
 
 
-  // todos.map((todo) => (
-  //     todo.id = parseInt(todo.id)
-  // ));
-
 
   const updateTodo = (todo, e, ti) => {
-    console.log(title);
     fetch(`http://localhost:8080/todo/${todo.id}`, {
       method: "PUT",
       body: JSON.stringify({
@@ -70,7 +64,6 @@ const Todos = () => {
     }));
     setToUpdateTodoId('');
     setTitle('');
-    console.log(title);
   };
 
   const searchTodos = (propertytype, property) => {
@@ -78,11 +71,11 @@ const Todos = () => {
       alert("please enter values")
       return;
     } else {
-      console.log(`propertytype:${propertytype}, property ${property}`)
       fetch(`http://localhost:8080/todo?${propertytype}=${property}&userId=${user.id}`)
         .then(response => response.json())
-        .then(json => { console.log(json); setTodos(json) })
-        .then(setSearchTodosBy('finished'));
+        .then(json => setTodos(json) )
+        .then(setSearchTodosBy('finished'))
+        .catch(error => console.error('Error:', error));
     }
   };
 
@@ -110,7 +103,8 @@ const Todos = () => {
     setSearchTodosBy('');
     fetch(`http://localhost:8080/todo?userId=${user.id}`)
       .then(response => response.json())
-      .then(json => setTodos(json));
+      .then(json => setTodos(json))
+      .catch(error => console.error('Error:', error));
   };
 
 

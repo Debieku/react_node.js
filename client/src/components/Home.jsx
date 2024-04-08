@@ -22,14 +22,17 @@ const Home = () => {
         fetch(`http://localhost:8080/login/${user.id}`, {
             method: 'put',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ "password": newPassword , "password": oldPassword })
+            body: JSON.stringify({ "newPassword": newPassword , "oldPassword": oldPassword })
         })
             .then(response => response.json())
-            .then(jsonUser => {
-                console.log(jsonUser)
-                if (jsonUser.result == 0)
-                    alert('password is wrong');
-            });
+            .then(json => {
+                if (json.result == 0)
+                    alert('password is wrong')
+                else{
+                    alert('update successfull')
+                }})
+            .catch(error => console.error('Error:', error));
+            cancel();
     }
 
     const cancel = () => {

@@ -1,14 +1,14 @@
 
 import { executeQuery } from './db.js';
-import { loginQuery, registerQuery } from './queryLogin.js'
-import { UserService } from '../service/userService.js';
+import { loginQuery, registerQuery, updatePassword } from './queryLogin.js'
+import { Service } from '../service/service.js';
 
-const tableName = "new_schema.userpassword";
 export class LoginService {
 
     async checkPassword(loginObj) {
-        const userService = new UserService();
-        const userByName = await userService.getUserByName(loginObj.userName);
+        const service = new Service();
+        const userName=loginObj.userName;
+        const userByName = await service.getBy("users",{"userName": userName });
         if (userByName.length == 0) {
             return { "result": 0 };
         }
@@ -30,7 +30,7 @@ export class LoginService {
 
     async updatePassword(id, oldPassword, newPassword){
         let queryPassword = loginQuery();
-        const result = await executeQuery(queryPassword, [oldPassword, id]);
+        const result = await executeQuery(queryPassword, [id, oldPassword]);
         if (result[0]["COUNT(*)"] == 0)
         return { "result": 0 };
         else{

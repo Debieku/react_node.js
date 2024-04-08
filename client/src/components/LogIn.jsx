@@ -11,14 +11,13 @@ const Login = () => {
   const [toRegister, setToRegister] = useState(false);
   const [user, setUser] = useState('');
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleLogin = () => {
     if (userName == '' || password == '') {
       alert("Enter name and password");
       return;
     }
-    console.log(userName + password)
     fetch(`http://localhost:8080/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -26,8 +25,7 @@ const Login = () => {
     })
       .then(response => response.json())
       .then(jsonUser => {
-        console.log(jsonUser)
-        if (jsonUser.result == 0)
+        if (jsonUser == "wrong details")
           alert('please try again or register.');
         else if (jsonUser.result == "blocked")
           alert("you tried too many times, you are blocked! try again later");
@@ -38,12 +36,12 @@ const Login = () => {
         }
         setUserName('');
         setPassword('');
-      });
+      })
+      .catch(error => console.error('Error:', error));
   };
 
 
   const goToRegister = () => {
-    console.log("kjgbvjyhg");
     setToRegister(true);
   };
 
@@ -56,12 +54,14 @@ const Login = () => {
           type="text"
           placeholder="User Name"
           value={userName}
+          required
           onChange={(e) => setUserName(e.target.value)}
         />
         <input
           type="password"
           placeholder="Password"
           value={password}
+          required
           onChange={(e) => setPassword(e.target.value)}
         />
         <button className='loginBtn' onClick={handleLogin}>Login</button>

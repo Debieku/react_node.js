@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import '../styles/RegisterAndLogin.css';
 
 const Register = () => {
   const [username, setUsername] = useState('');
@@ -9,21 +8,24 @@ const Register = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [user, setUser] = useState('gfhfgh');
 
   const navigate = useNavigate();
 
-  // const loginUser = () => {
-  //   setCurrentUser(user);
-  // };
+  function checkEmail(strEmail){
+    return /^\w+@([\w\-]+\.)+\w{2,3}$/.test(strEmail);
+  }
 
   const handleRegister = () => {
-    if (verifyPassword != password) {
+    if (verifyPassword != password||verifyPassword=="") {
       alert('Please validate your password.');
       return;
     }
-    console.log("jjjj")
-    let temp;
+    let user;
+    const validate = "/^([A-Za-z0-9_\-\.])"
+    if (name==""||username==""|| !checkEmail(email)) {
+      alert("the parameters you entered are not correct")
+      return
+    }
     const newUser = { "name": name, "userName": username, "email": email, "phone": phone, "password": password }
     fetch('http://localhost:8080/user', {
       method: 'POST',
@@ -31,15 +33,16 @@ const Register = () => {
       headers: { "Content-type": "application/json; charset=UTF-8", },
     })
       .then(response => response.json())
-      .then(response => {temp = { "id": response.insertId, "name": name, "username": username, "email": email, "phone": phone};
-       navigate(`/users/${response.insertId}/home`, { state: { user: temp } })})
+      .then(response => {
+        if (response.resualt == "userName duplicate") alert('userName exist')
+        else {
+          user = { "id": response.insertId, "name": name, "username": username, "email": email, "phone": phone };
+          navigate(`/users/${response.insertId}/home`, { state: { user: user } })
+        }
+      })
       .catch(error => console.error('Error:', error));
 
   };
-
-  // const handleLoginClick = () => {
-  //   navigate('/login');
-  // };
 
   return (
     <div>
@@ -49,18 +52,21 @@ const Register = () => {
           type="text"
           placeholder="name"
           value={name}
+          required
           onChange={(e) => setName(e.target.value)}
         />
         <input
           type="text"
           placeholder="Username"
           value={username}
+          required
           onChange={(e) => setUsername(e.target.value)}
         />
         <input
           type="email"
           placeholder="Email"
           value={email}
+          required
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
@@ -74,12 +80,14 @@ const Register = () => {
           type="password"
           placeholder="Password"
           value={password}
+          required
           onChange={(e) => setPassword(e.target.value)}
         />
         <input
           type="password"
           placeholder="Verify Password"
           value={verifyPassword}
+          required
           onChange={(e) => setVerifyPassword(e.target.value)}
         />
         <button className='signUpBtn' onClick={handleRegister}>Register</button>

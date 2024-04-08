@@ -1,8 +1,6 @@
 
-// import { PasswordController } from './passwordController.js';
 import { Service } from '../service/service.js';
 import { LoginService } from '../service/loginService.js';
-// import { UserService } from '../service/userService.js';
 
 const tableName = "users";
 
@@ -46,12 +44,12 @@ export class userController {
             const password = req.body.password;
             const service = new Service();
             delete req.body.password;
-            console.log(req.body)
             const resualt = await service.add(tableName, req.body);
+            if (resualt == undefined)
+                return res.status(401).json({ resualt: "userName duplicate" });
             const id = resualt.insertId;
             const loginService = new LoginService();
-            console.log("id ", id)
-            await loginService.register([ id, password ]);
+            await loginService.register([id, password]);
             console.log("req: add user with id= " + resualt.insertId + ", res: successfull")
             res.status(200).json(resualt);
         }

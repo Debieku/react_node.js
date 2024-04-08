@@ -36,7 +36,7 @@ export class commentController {
             const resultItem = await service.getBy(tableName, { 'id': id });
             delete resultItem[0].isActive;
             console.log("req: get comment by id= " + id + ", res: successfull")
-            res.status(200).json({ status: 200, data: resultItem });
+            res.status(200).json({  data: resultItem });
         }
         catch (ex) {
             const err = {};
@@ -82,7 +82,7 @@ export class commentController {
             const service = new Service();
             const resultItem = await service.delete(tableName, req.params.id);
             console.log("req: delete comment with id= " + req.params.id + ", res: successfull")
-            res.status(200).json({ status: 200, data: resultItem });
+            res.status(200).json({  data: resultItem });
         }
         catch (ex) {
             const err = {};

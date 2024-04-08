@@ -10,11 +10,8 @@ export class Service {
     }
 
     async getBy(tableName, sortByObj) {
-        console.log(sortByObj);
         const keys = Object.keys(sortByObj);
         const values = Object.values(sortByObj);
-        console.log("values:"+values)
-        console.log("keys:"+keys)
         const query = getByQuery(tableName, keys);
         return await executeQuery(query, values);
     }
@@ -29,7 +26,6 @@ export class Service {
     async update(tableName, userItem, id) {
         const keys = Object.keys(userItem);
         const values = Object.values(userItem);
-        console.log("keys:"+keys)
         const query = updateQuery(tableName, keys);
         values.push(id);
         await executeQuery(query, values);
@@ -41,7 +37,6 @@ export class Service {
     }
 
     async limit(tableName, numOfLimit, startLimit){
-        console.log(numOfLimit +startLimit);
         const query = limit(tableName);
         return await executeQuery(query, [numOfLimit, startLimit]);
     }

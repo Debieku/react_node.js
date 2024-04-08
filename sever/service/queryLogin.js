@@ -9,10 +9,11 @@ function registerQuery() {
 }
 
 function updatePassword() {
-    return `UPDATE new_schema.userpassword SET password=? WHERE id = ?`;
+    return `UPDATE new_schema.userpassword SET password=? WHERE userId = ?`;
 }
 
 export {
     loginQuery,
-    registerQuery
+    registerQuery, 
+    updatePassword
 } 
